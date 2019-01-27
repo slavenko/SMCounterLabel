@@ -12,7 +12,8 @@ class ViewController: UIViewController {
 
 
     @IBAction func updateLabel(_ sender: Any) {
-        label.setValue(Double.random(min: 1, max: 9))
+        label.setValue(Double.random(min: 100, max: 2000))
+        //label.setValue(8234.56)
     }
     @IBOutlet weak var label: SMNumberLabel!
     
@@ -20,7 +21,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-        label.setValue(1234.56)
+        label.setValue(9876.56)
     }
 }
 

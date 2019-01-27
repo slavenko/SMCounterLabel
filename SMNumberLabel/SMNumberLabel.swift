@@ -116,10 +116,10 @@ class SMNumberLabel : UILabel
                 {
                     lbl.text = text[index]
                 }
-//                else if Int(oldVal[index]) != nil
-//                {
-//                    lbl.text = oldVal[index]
-//                }
+                else if Int(oldVal[index]) != nil
+                {
+                    lbl.text = oldVal[index]
+                }
                 else
                 {
                     lbl.text = text[index]
@@ -164,7 +164,7 @@ class SMNumberLabel : UILabel
                 if newChar != nil && self.parseCurrencyString(oldVal) != nil
                 {
                     lbl.pushTransition(startValue: oldChar, endValue: newChar!, duration: 0.2, delay: delay)
-                    delay += 0.4
+                    delay += 1
                 }
             }
 
@@ -261,8 +261,8 @@ extension UILabel {
         //return
         if Double(self.text!) != nil
         {
-            let finalDuration : Double = duration / Double(endValue - startValue)
-            var startDelay : Double = duration
+            
+            var startDelay : Double = 0
             let startVal = startValue
             var endVal = endValue
             if startVal > endValue
@@ -270,21 +270,23 @@ extension UILabel {
                 endVal = endValue + 10
             }
             
+            let finalDuration : Double = duration / Double(endVal - startVal)
+            
             for i in startVal...endVal
             {
                 print("start:\(startVal ) end:\(startVal ) index: \(i) last: \(String(i).last!)")
                 // Always update your GUI on the main thread
-                DispatchQueue.main.asyncAfter(deadline: .now() + (delay + (finalDuration * Double(i)))) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + (startDelay + (finalDuration * Double(i)))) {
                     let animation:CATransition = CATransition()
                     animation.beginTime = CACurrentMediaTime()
                     animation.timingFunction = CAMediaTimingFunction(name:
-                        CAMediaTimingFunctionName.easeInEaseOut)
+                        CAMediaTimingFunctionName.easeOut)
                     
                     animation.type = CATransitionType.push
                     animation.subtype = CATransitionSubtype.fromTop
                     animation.duration = finalDuration
                     self.layer.add(animation, forKey: CATransitionType.push.rawValue)
-                    startDelay += duration
+                    startDelay += finalDuration
                     
                     print("TEXT: \(String(i).last!)")
                     self.text = "\(String(i).last!)"
