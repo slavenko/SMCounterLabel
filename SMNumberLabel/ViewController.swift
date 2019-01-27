@@ -1,6 +1,6 @@
 //
 //  ViewController.swift
-//  SMNumberLabel
+//  SMCounterLabel
 //
 //  Created by Slavenko on 1/26/19.
 //  Copyright © 2019 Slavenko. All rights reserved.
@@ -15,7 +15,7 @@ class ViewController: UIViewController {
         label.setValue(Double.random(min: 100, max: 2000))
         //label.setValue(8234.56)
     }
-    @IBOutlet weak var label: SMNumberLabel!
+    @IBOutlet weak var label: SMCounterLabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()

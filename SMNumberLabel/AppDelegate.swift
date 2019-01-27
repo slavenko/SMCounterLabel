@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  SMNumberLabel
+//  SMCounterLabel
 //
 //  Created by Slavenko on 1/26/19.
 //  Copyright © 2019 Slavenko. All rights reserved.

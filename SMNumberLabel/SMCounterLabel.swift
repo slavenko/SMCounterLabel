@@ -1,6 +1,6 @@
 //
-//  SMNumberLabel.swift
-//  SMNumberLabel
+//  SMCounterLabel.swift
+//  SMCounterLabel
 //
 //  Created by Slavenko on 1/26/19.
 //  Copyright © 2019 Slavenko. All rights reserved.
@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class SMNumberLabel : UILabel
+class SMCounterLabel : UILabel
 {
     lazy var container : UIView = {
         let c = UIView()

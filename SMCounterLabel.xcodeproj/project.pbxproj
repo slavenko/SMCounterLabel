@@ -12,18 +12,18 @@
 		51627BC221FC96AC00FB98DD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 51627BC021FC96AC00FB98DD /* Main.storyboard */; };
 		51627BC421FC96AE00FB98DD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 51627BC321FC96AE00FB98DD /* Assets.xcassets */; };
 		51627BC721FC96AE00FB98DD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 51627BC521FC96AE00FB98DD /* LaunchScreen.storyboard */; };
-		51627BCF21FC96EB00FB98DD /* SMNumberLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51627BCE21FC96EB00FB98DD /* SMNumberLabel.swift */; };
+		51627BCF21FC96EB00FB98DD /* SMCounterLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51627BCE21FC96EB00FB98DD /* SMCounterLabel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		51627BB921FC96AC00FB98DD /* SMNumberLabel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SMNumberLabel.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		51627BB921FC96AC00FB98DD /* SMCounterLabel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SMCounterLabel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		51627BBC21FC96AC00FB98DD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		51627BBE21FC96AC00FB98DD /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		51627BC121FC96AC00FB98DD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		51627BC321FC96AE00FB98DD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		51627BC621FC96AE00FB98DD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		51627BC821FC96AE00FB98DD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		51627BCE21FC96EB00FB98DD /* SMNumberLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMNumberLabel.swift; sourceTree = "<group>"; };
+		51627BCE21FC96EB00FB98DD /* SMCounterLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMCounterLabel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,7 +48,7 @@
 		51627BBA21FC96AC00FB98DD /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				51627BB921FC96AC00FB98DD /* SMNumberLabel.app */,
+				51627BB921FC96AC00FB98DD /* SMCounterLabel.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -62,7 +62,7 @@
 				51627BC321FC96AE00FB98DD /* Assets.xcassets */,
 				51627BC521FC96AE00FB98DD /* LaunchScreen.storyboard */,
 				51627BC821FC96AE00FB98DD /* Info.plist */,
-				51627BCE21FC96EB00FB98DD /* SMNumberLabel.swift */,
+				51627BCE21FC96EB00FB98DD /* SMCounterLabel.swift */,
 			);
 			path = SMNumberLabel;
 			sourceTree = "<group>";
@@ -70,9 +70,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		51627BB821FC96AC00FB98DD /* SMNumberLabel */ = {
+		51627BB821FC96AC00FB98DD /* SMCounterLabel */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 51627BCB21FC96AE00FB98DD /* Build configuration list for PBXNativeTarget "SMNumberLabel" */;
+			buildConfigurationList = 51627BCB21FC96AE00FB98DD /* Build configuration list for PBXNativeTarget "SMCounterLabel" */;
 			buildPhases = (
 				51627BB521FC96AC00FB98DD /* Sources */,
 				51627BB621FC96AC00FB98DD /* Frameworks */,
@@ -82,9 +82,9 @@
 			);
 			dependencies = (
 			);
-			name = SMNumberLabel;
+			name = SMCounterLabel;
 			productName = SMNumberLabel;
-			productReference = 51627BB921FC96AC00FB98DD /* SMNumberLabel.app */;
+			productReference = 51627BB921FC96AC00FB98DD /* SMCounterLabel.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -102,7 +102,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 51627BB421FC96AC00FB98DD /* Build configuration list for PBXProject "SMNumberLabel" */;
+			buildConfigurationList = 51627BB421FC96AC00FB98DD /* Build configuration list for PBXProject "SMCounterLabel" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -115,7 +115,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				51627BB821FC96AC00FB98DD /* SMNumberLabel */,
+				51627BB821FC96AC00FB98DD /* SMCounterLabel */,
 			);
 		};
 /* End PBXProject section */
@@ -140,7 +140,7 @@
 			files = (
 				51627BBF21FC96AC00FB98DD /* ViewController.swift in Sources */,
 				51627BBD21FC96AC00FB98DD /* AppDelegate.swift in Sources */,
-				51627BCF21FC96EB00FB98DD /* SMNumberLabel.swift in Sources */,
+				51627BCF21FC96EB00FB98DD /* SMCounterLabel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -319,7 +319,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		51627BB421FC96AC00FB98DD /* Build configuration list for PBXProject "SMNumberLabel" */ = {
+		51627BB421FC96AC00FB98DD /* Build configuration list for PBXProject "SMCounterLabel" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				51627BC921FC96AE00FB98DD /* Debug */,
@@ -328,7 +328,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		51627BCB21FC96AE00FB98DD /* Build configuration list for PBXNativeTarget "SMNumberLabel" */ = {
+		51627BCB21FC96AE00FB98DD /* Build configuration list for PBXNativeTarget "SMCounterLabel" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				51627BCC21FC96AE00FB98DD /* Debug */,
