@@ -9,6 +9,14 @@
 import Foundation
 import UIKit
 
+func BG(_ block: @escaping ()->Void) {
+    DispatchQueue.global(qos: .default).async(execute: block)
+}
+
+func UI(_ block: @escaping ()->Void) {
+    DispatchQueue.main.async(execute: block)
+}
+
 class SMCounterLabel : UILabel
 {
     lazy var container : UIView = {
@@ -18,6 +26,8 @@ class SMCounterLabel : UILabel
         return c
     }()
     
+    var tinyDecimalNumbers : Bool = false
+    
     func delay(_ delay:Double, closure:@escaping ()->()) {
         let when = DispatchTime.now() + delay
         DispatchQueue.main.asyncAfter(deadline: when, execute: closure)
@@ -25,17 +35,15 @@ class SMCounterLabel : UILabel
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        //self.clipsToBounds = true
         self.backgroundColor = .clear
-        self.textColor = .red
+        self.textColor = .clear
         self.addContainer()
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        //self.clipsToBounds = true
         self.backgroundColor = .clear
-        self.textColor = .red
+        self.textColor = .clear
         self.addContainer()
     }
     
@@ -82,92 +90,108 @@ class SMCounterLabel : UILabel
                 self.pushTransition(startValue: 0, endValue: 0, duration: 0.0, delay: 0)
                 return
             }
-            var oldVal = oldValue!
-            var newVal = text
-            if newVal.count < oldVal.count
+            
+            if oldValue != nil
             {
-                newVal = String(oldVal.dropLast(oldVal.count - newVal.count))
+                let oldVal = oldValue!
+                var newVal = text
+                if newVal.count < oldVal.count
+                {
+                    newVal = String(oldVal.dropLast(oldVal.count - newVal.count))
+                }
+                let attributedText = NSMutableAttributedString(string: text)
+                let decimalSeparator = NSLocale.current.decimalSeparator! as String
+                let fullFont = self.font
+                let halfFont = UIFont(name: self.font.fontName, size: self.font.pointSize / 2)
+                var startPos = 0
+                if let range = text.range(of: decimalSeparator)
+                {
+                    startPos = text.distance(from: text.startIndex, to: range.lowerBound)
+                    let attributedRange = NSMakeRange(startPos, text.count - startPos)
+                    let fontSize = tinyDecimalNumbers ? self.font.pointSize / 2 : self.font.pointSize
+                    attributedText.addAttribute(NSAttributedString.Key.font, value: UIFont(
+                        name: self.font.fontName,
+                        size: fontSize)!, range: attributedRange)
+                }
+                self.attributedText = attributedText
+                let fullTextWidth : CGFloat = self.text?.width(withConstrainedHeight: 0, font: self.font) ?? 0
+                var previousLetter : UILabel? = nil
+                var delay : Double = 0.0
+                self.container.subviews.map({$0.removeFromSuperview()})
+                for (index, char) in text.enumerated()
+                {
+                    let oldChar = Int(oldVal[index]) ?? 0
+                    let newChar = Int(text[index])
+                    
+                    let lbl = UILabel()
+                    if newChar == nil
+                    {
+                        lbl.text = text[index]
+                    }
+                    else if Int(oldVal[index]) != nil
+                    {
+                        lbl.text = oldVal[index]
+                    }
+                    else
+                    {
+                        lbl.text = text[index]
+                    }
+                    
+                    lbl.font = self.font
+                    self.container.addSubview(lbl)
+                    lbl.translatesAutoresizingMaskIntoConstraints = false
+                    
+                    lbl.topAnchor.constraint(equalTo: container.topAnchor).isActive = true
+                    
+                    var width = String(char).width(withConstrainedHeight: 0, font: fullFont!)
+                    var offsetBottom : CGFloat = 0
+                    var offsetLeft : CGFloat = 0
+                    
+                    if tinyDecimalNumbers && startPos <= index
+                    {
+                        lbl.font = halfFont
+                        width = String(char).width(withConstrainedHeight: 0, font: halfFont!) + 50
+                        offsetBottom = (fullFont?.pointSize)! / 3 + 1
+                        offsetLeft = -1
+                    }
+                    
+                    if previousLetter == nil
+                    {
+                        if self.textAlignment == .left
+                        {
+                            lbl.leadingAnchor.constraint(equalTo: container.leadingAnchor).isActive = true
+                        }
+                        else if self.textAlignment == .right
+                        {
+                            lbl.leadingAnchor.constraint(equalTo: container.trailingAnchor, constant: -fullTextWidth).isActive = true
+                        }
+                        else if self.textAlignment == .center
+                        {
+                            lbl.leadingAnchor.constraint(equalTo: container.centerXAnchor, constant: -fullTextWidth / 2).isActive = true
+                        }
+                    }
+                    else
+                    {
+                        lbl.leadingAnchor.constraint(equalTo: (previousLetter?.trailingAnchor)!, constant: offsetLeft).isActive = true
+                    }
+                    lbl.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: offsetBottom).isActive = true
+                    lbl.widthAnchor.constraint(equalToConstant: width)
+                    //lbl.clipsToBounds = true
+                    
+                    previousLetter = lbl
+                    
+                    if index == (self.text?.count)! - 1
+                    {
+                        lbl.trailingAnchor.constraint(equalTo: container.trailingAnchor).isActive = true
+                    }
+                    
+                    if newChar != nil && self.parseCurrencyString(oldVal) != nil
+                    {
+                        lbl.pushTransition(startValue: oldChar, endValue: newChar!, duration: 0.2, delay: delay)
+                        delay += 1
+                    }
+                }
             }
-            let attributedText = NSMutableAttributedString(string: text)
-            let decimalSeparator = NSLocale.current.decimalSeparator! as String
-            let fullFont = self.font
-            let halfFont = UIFont(name: self.font.fontName, size: self.font.pointSize / 2)
-            var startPos = 0
-            if let range = text.range(of: decimalSeparator)
-            {
-                startPos = text.distance(from: text.startIndex, to: range.lowerBound)
-                let attributedRange = NSMakeRange(startPos, text.count - startPos)
-                let fontSize = self.font.pointSize / 2
-                attributedText.addAttribute(NSAttributedString.Key.font, value: UIFont(
-                    name: self.font.fontName,
-                    size: fontSize)!, range: attributedRange)
-            }
-            self.attributedText = attributedText
-            var previousLetter : UILabel? = nil
-            var delay : Double = 0.0
-            self.container.subviews.map({$0.removeFromSuperview()})
-            for (index, char) in text.enumerated()
-            {
-                let oldChar = Int(oldVal[index]) ?? 0
-                let newChar = Int(text[index])
-                
-                let lbl = UILabel()
-                if newChar == nil
-                {
-                    lbl.text = text[index]
-                }
-                else if Int(oldVal[index]) != nil
-                {
-                    lbl.text = oldVal[index]
-                }
-                else
-                {
-                    lbl.text = text[index]
-                }
-                
-                lbl.font = self.font
-                self.container.addSubview(lbl)
-                lbl.translatesAutoresizingMaskIntoConstraints = false
-                
-                lbl.topAnchor.constraint(equalTo: container.topAnchor).isActive = true
-                
-                var width = String(char).width(withConstrainedHeight: 0, font: fullFont!)
-                var offsetBottom : CGFloat = 0
-                var offsetLeft : CGFloat = 0
-                if startPos <= index
-                {
-                    lbl.font = halfFont
-                    width = String(char).width(withConstrainedHeight: 0, font: halfFont!) + 50
-                    offsetBottom = (fullFont?.pointSize)! / 3 + 1
-                    offsetLeft = -1
-                }
-                
-                if previousLetter == nil
-                {
-                    lbl.leadingAnchor.constraint(equalTo: container.leadingAnchor).isActive = true
-                }
-                else
-                {
-                    lbl.leadingAnchor.constraint(equalTo: (previousLetter?.trailingAnchor)!, constant: offsetLeft).isActive = true
-                }
-                lbl.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: offsetBottom).isActive = true
-                lbl.widthAnchor.constraint(equalToConstant: width)
-                //lbl.clipsToBounds = true
-                
-                previousLetter = lbl
-                
-                if index == (self.text?.count)! - 1
-                {
-                    lbl.trailingAnchor.constraint(equalTo: container.trailingAnchor).isActive = true
-                }
-                
-                if newChar != nil && self.parseCurrencyString(oldVal) != nil
-                {
-                    lbl.pushTransition(startValue: oldChar, endValue: newChar!, duration: 0.2, delay: delay)
-                    delay += 1
-                }
-            }
-
         }
     }
     
@@ -252,11 +276,25 @@ extension String {
     }
 }
 
+extension NSAttributedString {
+    func height(withConstrainedWidth width: CGFloat) -> CGFloat {
+        let constraintRect = CGSize(width: width, height: .greatestFiniteMagnitude)
+        let boundingBox = boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, context: nil)
+        
+        return ceil(boundingBox.height)
+    }
+    
+    func width(withConstrainedHeight height: CGFloat) -> CGFloat {
+        let constraintRect = CGSize(width: .greatestFiniteMagnitude, height: height)
+        let boundingBox = boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, context: nil)
+        
+        return ceil(boundingBox.width)
+    }
+}
+
 // Usage: insert view.pushTransition right before changing content
 extension UILabel {
     func pushTransition(startValue: Int, endValue: Int, duration:CFTimeInterval, delay: Double) {
-        print("start value: \(startValue)")
-        print("end value: \(endValue)")
 
         //return
         if Double(self.text!) != nil
@@ -274,7 +312,7 @@ extension UILabel {
             
             for i in startVal...endVal
             {
-                print("start:\(startVal ) end:\(startVal ) index: \(i) last: \(String(i).last!)")
+                //print("start:\(startVal ) end:\(startVal ) index: \(i) val: \(String(i).last!)")
                 // Always update your GUI on the main thread
                 DispatchQueue.main.asyncAfter(deadline: .now() + (startDelay + (finalDuration * Double(i)))) {
                     let animation:CATransition = CATransition()
@@ -288,7 +326,6 @@ extension UILabel {
                     self.layer.add(animation, forKey: CATransitionType.push.rawValue)
                     startDelay += finalDuration
                     
-                    print("TEXT: \(String(i).last!)")
                     self.text = "\(String(i).last!)"
                 }
             }
