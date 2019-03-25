@@ -10,18 +10,22 @@ import UIKit
 
 class ViewController: UIViewController {
 
-
-    @IBAction func updateLabel(_ sender: Any) {
-        label.setValue(Double.random(min: 100, max: 2000))
-        //label.setValue(8234.56)
-    }
     @IBOutlet weak var label: SMCounterLabel!
+    @IBOutlet weak var dummyLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        label.tinyDecimalNumbers = false
-        label.setValue(1234.56)
+        
+        label.formatType = .decimal
+        
+        label.setValue(1234.67)
+        dummyLabel.text = "\(label.getValue())"
+    }
+    
+    @IBAction func updateLabel(_ sender: Any) {
+        let randomNumber = Double.random(min: 1, max: 2000)
+        label.setValue(randomNumber)
+        dummyLabel.text = "\(label.getValue())"
     }
 }
 

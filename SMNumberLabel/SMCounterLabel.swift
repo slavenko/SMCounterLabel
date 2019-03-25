@@ -9,29 +9,51 @@
 import Foundation
 import UIKit
 
-func BG(_ block: @escaping ()->Void) {
-    DispatchQueue.global(qos: .default).async(execute: block)
+public enum SMLabelFormatType {
+    case decimal
+    case integer
+    case fancy
 }
 
-func UI(_ block: @escaping ()->Void) {
-    DispatchQueue.main.async(execute: block)
+class SMSingleCounterLabel : UILabel
+{
+    func incrementValue(endValue: Int, duration:CFTimeInterval)
+    {
+        let startVal = (Int(self.text!) ?? 0) + 1
+        
+        //we don't want to have increment for example from 3 to 4, because that's just one spin and it looks boring, so we'll add 10 just in case so we'll spin from 3 to 14
+        var endVal = endValue + 10
+        
+        //in case we have for axample 9 and 12, it also looks boring, since it's only 3 spins so we make sure to add some more spins
+        if (endVal - startVal) < 6
+        {
+            endVal += 10
+        }
+        
+        //We calculate how long shuld each increment take, because we need to finish entire animation in a fixed amount of time
+        let finalDuration : Double = duration / Double(endVal - startVal)
+        for i in startVal...endVal
+        {
+            let index = i - startVal
+            let character = "\(String(i).last!)"
+            DispatchQueue.main.asyncAfter(deadline: .now() + (finalDuration * Double(index))){
+                self.layer.animateUp(duration: finalDuration, delay: 0)
+                self.text = "\(character)"
+            }
+        }
+    }
 }
 
 class SMCounterLabel : UILabel
 {
+    var formatType : SMLabelFormatType = .decimal
+    
     lazy var container : UIView = {
         let c = UIView()
         c.backgroundColor = .clear
         c.clipsToBounds = true
         return c
     }()
-    
-    var tinyDecimalNumbers : Bool = false
-    
-    func delay(_ delay:Double, closure:@escaping ()->()) {
-        let when = DispatchTime.now() + delay
-        DispatchQueue.main.asyncAfter(deadline: when, execute: closure)
-    }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -69,9 +91,19 @@ class SMCounterLabel : UILabel
         formatter.numberStyle = .decimal
         formatter.maximumFractionDigits = 2
         formatter.minimumFractionDigits = 2
+        
+        //Other supported format types (decimal/fancy) support decimal places
+        if formatType == .integer
+        {
+            formatter.numberStyle = .none
+            formatter.maximumFractionDigits = 0
+            formatter.minimumFractionDigits = 0
+        }
+        
         return formatter.string(from: NSNumber(value: self.value))
     }
     
+    //We'll try to parse whatever we send here
     func setValue(_ value: Any?) {
         if let dVal = value as? Double
         {
@@ -83,11 +115,16 @@ class SMCounterLabel : UILabel
         }
     }
     
+    //Return string value back
+    func getValue() -> String
+    {
+        return self.text!
+    }
+    
     override var text: String? {
         didSet {
             guard let text = text else { return }
             guard self.parseCurrencyString(text) != nil else {
-                self.pushTransition(startValue: 0, endValue: 0, duration: 0.0, delay: 0)
                 return
             }
             
@@ -108,22 +145,21 @@ class SMCounterLabel : UILabel
                 {
                     startPos = text.distance(from: text.startIndex, to: range.lowerBound)
                     let attributedRange = NSMakeRange(startPos, text.count - startPos)
-                    let fontSize = tinyDecimalNumbers ? self.font.pointSize / 2 : self.font.pointSize
+                    let fontSize = formatType == .fancy ? self.font.pointSize / 2 : self.font.pointSize
                     attributedText.addAttribute(NSAttributedString.Key.font, value: UIFont(
                         name: self.font.fontName,
                         size: fontSize)!, range: attributedRange)
                 }
                 self.attributedText = attributedText
                 let fullTextWidth : CGFloat = self.text?.width(withConstrainedHeight: 0, font: self.font) ?? 0
-                var previousLetter : UILabel? = nil
+                var previousLetter : SMSingleCounterLabel? = nil
                 var delay : Double = 0.0
-                self.container.subviews.map({$0.removeFromSuperview()})
+                _ = self.container.subviews.map({$0.removeFromSuperview()})
                 for (index, char) in text.enumerated()
                 {
-                    let oldChar = Int(oldVal[index]) ?? 0
                     let newChar = Int(text[index])
                     
-                    let lbl = UILabel()
+                    let lbl = SMSingleCounterLabel()
                     if newChar == nil
                     {
                         lbl.text = text[index]
@@ -147,7 +183,7 @@ class SMCounterLabel : UILabel
                     var offsetBottom : CGFloat = 0
                     var offsetLeft : CGFloat = 0
                     
-                    if tinyDecimalNumbers && startPos <= index
+                    if formatType == .fancy && startPos <= index
                     {
                         lbl.font = halfFont
                         width = String(char).width(withConstrainedHeight: 0, font: halfFont!) + 50
@@ -187,8 +223,10 @@ class SMCounterLabel : UILabel
                     
                     if newChar != nil && self.parseCurrencyString(oldVal) != nil
                     {
-                        lbl.pushTransition(startValue: oldChar, endValue: newChar!, duration: 0.2, delay: delay)
-                        delay += 1
+                        DispatchQueue.main.asyncAfter(deadline: .now() + delay){
+                            lbl.incrementValue(endValue: newChar!, duration: 0.3)
+                        }
+                        delay += 0.2
                     }
                 }
             }
@@ -200,9 +238,9 @@ class SMCounterLabel : UILabel
         var decimalSep = NSLocale.current.decimalSeparator! as String
         var groupSep = NSLocale.current.groupingSeparator! as String
         
-        //Ok since everyone has different regional settings on their phone and bank can always decide to change the formatting
+        //Ok since everyone has different regional settings on their phone and can always change number format
         //we're gonna do this the old school way.
-        //check for the last occurence of dot and ocmma characters in the string and decide based on that
+        //check for the last occurence of dot and comma characters in the string and decide based on that
         //what kind of string is the user trying to type in/paste
         //bring it on
         
@@ -228,7 +266,7 @@ class SMCounterLabel : UILabel
         
         if dotPosition > 0 && dotPosition > commaPosition
         {
-            //the typoed in number has dot as a decimal separator.
+            //the typed in number has dot as a decimal separator.
             //we assume that the comma is group separator
             decimalSep = "."
             groupSep = ","
@@ -292,47 +330,6 @@ extension NSAttributedString {
     }
 }
 
-// Usage: insert view.pushTransition right before changing content
-extension UILabel {
-    func pushTransition(startValue: Int, endValue: Int, duration:CFTimeInterval, delay: Double) {
-
-        //return
-        if Double(self.text!) != nil
-        {
-            
-            var startDelay : Double = 0
-            let startVal = startValue
-            var endVal = endValue
-            if startVal > endValue
-            {
-                endVal = endValue + 10
-            }
-            
-            let finalDuration : Double = duration / Double(endVal - startVal)
-            
-            for i in startVal...endVal
-            {
-                //print("start:\(startVal ) end:\(startVal ) index: \(i) val: \(String(i).last!)")
-                // Always update your GUI on the main thread
-                DispatchQueue.main.asyncAfter(deadline: .now() + (startDelay + (finalDuration * Double(i)))) {
-                    let animation:CATransition = CATransition()
-                    animation.beginTime = CACurrentMediaTime()
-                    animation.timingFunction = CAMediaTimingFunction(name:
-                        CAMediaTimingFunctionName.easeOut)
-                    
-                    animation.type = CATransitionType.push
-                    animation.subtype = CATransitionSubtype.fromTop
-                    animation.duration = finalDuration
-                    self.layer.add(animation, forKey: CATransitionType.push.rawValue)
-                    startDelay += finalDuration
-                    
-                    self.text = "\(String(i).last!)"
-                }
-            }
-        }
-    }
-}
-
 extension String {
     
     var length: Int {
@@ -359,4 +356,36 @@ extension String {
         return String(self[start ..< end])
     }
     
+}
+
+extension CALayer {
+    //Animate character sliding up
+    func animateUp(duration:CFTimeInterval, delay: Double) {
+        let animation = CATransition()
+        animation.beginTime = CACurrentMediaTime() + delay
+        animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
+        animation.duration = duration
+        animation.type = CATransitionType.push
+        animation.subtype = CATransitionSubtype.fromTop
+        
+        self.add(animation, forKey: CATransitionType.push.rawValue)
+    }
+    
+    //Animate character sliding down, maybe we can use this if the new value is smaller than the last
+    func animateDown(duration:CFTimeInterval, delay: Double) {
+        let animation = CATransition()
+        animation.beginTime = CACurrentMediaTime() + delay
+        animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
+        animation.duration = duration
+        animation.type = CATransitionType.push
+        animation.subtype = CATransitionSubtype.fromBottom
+        self.add(animation, forKey: CATransitionType.push.rawValue)
+        
+        let transition: CATransition = CATransition()
+        transition.duration = 0.4
+        transition.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
+        transition.type = CATransitionType.fade
+        
+        self.add(transition, forKey: CATransitionType.fade.rawValue)
+    }
 }
