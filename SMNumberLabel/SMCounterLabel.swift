@@ -42,6 +42,34 @@ class SMSingleCounterLabel : UILabel
             }
         }
     }
+    
+    func decrementValue(endValue: Int, duration:CFTimeInterval)
+    {
+        var startValue = (Int(self.text!) ?? 0) - 1
+        
+        //we don't want to have decrement for example from 4 to 3, because that's just one spin and it looks boring, so we'll add 10 just in case so we'll spin from 14 to 3
+        startValue = startValue + 10
+        
+        //in case we have for axample 12 and 9, it also looks boring, since it's only 3 spins so we make sure to add some more spins
+        if (startValue - endValue) < 6
+        {
+            startValue += 10
+        }
+        
+        //We calculate how long shuld each increment take, because we need to finish entire animation in a fixed amount of time
+        let finalDuration : Double = duration / Double(startValue - endValue)
+        
+        var i = 0
+        while startValue >= endValue {
+            let character = "\(String(startValue).last!)"
+            DispatchQueue.main.asyncAfter(deadline: .now() + (finalDuration * Double(i))){
+                self.layer.animateDown(duration: finalDuration)
+                self.text = "\(character)"
+            }
+            startValue = startValue - 1
+            i = i + 1
+        }
+    }
 }
 
 class SMCounterLabel : UILabel
@@ -154,6 +182,7 @@ class SMCounterLabel : UILabel
                 let fullTextWidth : CGFloat = self.text?.width(withConstrainedHeight: 0, font: self.font) ?? 0
                 var previousLetter : SMSingleCounterLabel? = nil
                 var delay : Double = 0.0
+                var duration : Double = 0.6
                 _ = self.container.subviews.map({$0.removeFromSuperview()})
                 for (index, char) in text.enumerated()
                 {
@@ -220,13 +249,23 @@ class SMCounterLabel : UILabel
                     {
                         lbl.trailingAnchor.constraint(equalTo: container.trailingAnchor).isActive = true
                     }
-                    
-                    if newChar != nil && self.parseCurrencyString(oldVal) != nil
+                    let oldNumber = self.parseCurrencyString(oldVal)
+                    let newNumber = self.parseCurrencyString(text)
+                    if newChar != nil && oldNumber != nil
                     {
                         DispatchQueue.main.asyncAfter(deadline: .now() + delay){
-                            lbl.incrementValue(endValue: newChar!, duration: 0.3)
+                            if newNumber! > oldNumber!
+                            {
+                                lbl.incrementValue(endValue: newChar!, duration: duration)
+                            }
+                            else
+                            {
+                                lbl.decrementValue(endValue: newChar!, duration: duration)
+                            }
+                            duration += 0.05
+                            
                         }
-                        delay += 0.2
+                        delay += 0.1
                     }
                 }
             }
@@ -372,20 +411,13 @@ extension CALayer {
     }
     
     //Animate character sliding down, maybe we can use this if the new value is smaller than the last
-    func animateDown(duration:CFTimeInterval, delay: Double) {
+    func animateDown(duration:CFTimeInterval) {
         let animation = CATransition()
-        animation.beginTime = CACurrentMediaTime() + delay
+        animation.beginTime = CACurrentMediaTime()
         animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
         animation.duration = duration
         animation.type = CATransitionType.push
         animation.subtype = CATransitionSubtype.fromBottom
         self.add(animation, forKey: CATransitionType.push.rawValue)
-        
-        let transition: CATransition = CATransition()
-        transition.duration = 0.4
-        transition.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
-        transition.type = CATransitionType.fade
-        
-        self.add(transition, forKey: CATransitionType.fade.rawValue)
     }
 }

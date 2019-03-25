@@ -18,12 +18,12 @@ class ViewController: UIViewController {
         
         label.formatType = .decimal
         
-        label.setValue(1234.67)
+        label.setValue(1234.56)
         dummyLabel.text = "\(label.getValue())"
     }
     
     @IBAction func updateLabel(_ sender: Any) {
-        let randomNumber = Double.random(min: 1, max: 2000)
+        let randomNumber = Double.random(min: 1, max: 9999)
         label.setValue(randomNumber)
         dummyLabel.text = "\(label.getValue())"
     }
