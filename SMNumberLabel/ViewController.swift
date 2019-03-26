@@ -16,8 +16,11 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        label.formatType = .decimal
+        //I recommend using monospaced fonts, since you will get a bit of jitter when animating, since the character width is different on numbers
+        label.font = UIFont(name:"Menlo", size: 50)
+        dummyLabel.font = UIFont(name:"Menlo", size: 50)
         
+        label.formatType = .decimal
         label.setValue(1234.56)
         dummyLabel.text = "\(label.getValue())"
     }

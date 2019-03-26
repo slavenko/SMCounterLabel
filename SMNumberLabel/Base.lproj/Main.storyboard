@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -13,21 +13,33 @@
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="SMCounterLabel" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="QdP-eN-UpR"/>
+                        <viewControllerLayoutGuide type="bottom" id="eIu-Hd-bQg"/>
+                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="94F-vW-Dbv" customClass="SMCounterLabel" customModule="SMCounterLabel" customModuleProvider="target">
-                                <rect key="frame" x="16" y="310" width="344" height="48"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="94F-vW-Dbv" customClass="SMCounterLabel" customModule="SMCounterLabel" customModuleProvider="target">
+                                <rect key="frame" x="16" y="310" width="343" height="48"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="40"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="m7G-9q-ZwW">
-                                <rect key="frame" x="109" y="43" width="157" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jsL-0u-GXV">
+                                <rect key="frame" x="16" y="366" width="343" height="48"/>
+                                <fontDescription key="fontDescription" type="system" weight="thin" pointSize="40"/>
+                                <color key="textColor" red="0.92941176469999998" green="0.1137254902" blue="0.21176470589999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="m7G-9q-ZwW">
+                                <rect key="frame" x="109" y="247" width="157" height="30"/>
                                 <color key="backgroundColor" red="0.92941176469999998" green="0.1137254902" blue="0.21176470589999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="157" id="LR4-DE-bC1"/>
+                                    <constraint firstAttribute="height" constant="30" id="q1P-ae-XLJ"/>
+                                </constraints>
                                 <state key="normal" title="Random number">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
@@ -35,15 +47,19 @@
                                     <action selector="updateLabel:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Hn4-78-IK3"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="jsL-0u-GXV">
-                                <rect key="frame" x="16" y="91" width="343" height="40"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" weight="thin" pointSize="40"/>
-                                <color key="textColor" red="0.92941176469999998" green="0.1137254902" blue="0.21176470589999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="94F-vW-Dbv" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="AWn-V6-ntT"/>
+                            <constraint firstItem="94F-vW-Dbv" firstAttribute="top" secondItem="m7G-9q-ZwW" secondAttribute="bottom" constant="33" id="IXu-tv-de3"/>
+                            <constraint firstItem="jsL-0u-GXV" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="Lwb-R9-5r6"/>
+                            <constraint firstItem="94F-vW-Dbv" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="UUr-Qe-EJu"/>
+                            <constraint firstItem="m7G-9q-ZwW" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="VuW-Km-BLs"/>
+                            <constraint firstItem="94F-vW-Dbv" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="fhC-1N-osc"/>
+                            <constraint firstItem="jsL-0u-GXV" firstAttribute="top" secondItem="94F-vW-Dbv" secondAttribute="bottom" constant="8" id="pca-1p-SfT"/>
+                            <constraint firstItem="94F-vW-Dbv" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="vCU-id-Uol"/>
+                            <constraint firstItem="jsL-0u-GXV" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="xuz-HD-Yfw"/>
+                        </constraints>
                     </view>
                     <connections>
                         <outlet property="dummyLabel" destination="jsL-0u-GXV" id="ZPM-VG-jrH"/>
