@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="vXZ-lx-hvc">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="ufC-wZ-h7g">
+            <objects>
+                <viewController id="vXZ-lx-hvc" customClass="ViewController" customModule="SMCounterLabel_Example" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="jyV-Pf-zRb"/>
+                        <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="kh9-bI-dsS">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NAS-nB-CZC">
+                                <rect key="frame" x="122.5" y="318.5" width="130" height="30"/>
+                                <color key="backgroundColor" red="0.92941176469999998" green="0.1137254902" blue="0.21176470589999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="130" id="5Tm-H0-eZN"/>
+                                    <constraint firstAttribute="height" constant="30" id="dfL-25-yf1"/>
+                                </constraints>
+                                <state key="normal" title="Random number">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="updateLabel:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="vak-Zo-sDo"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VMZ-Q5-yn1">
+                                <rect key="frame" x="0.0" y="261.5" width="375" height="47"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="39"/>
+                                <color key="textColor" red="0.92941176469999998" green="0.1137254902" blue="0.21176470589999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hbV-UK-h7I" customClass="SMCounterLabel" customModule="SMCounterLabel">
+                                <rect key="frame" x="0.0" y="194.5" width="375" height="47"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="39"/>
+                                <nil key="textColor"/>
+                                <color key="highlightedColor" red="0.92941176469999998" green="0.1137254902" blue="0.21176470589999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="NAS-nB-CZC" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="1bE-iG-id5"/>
+                            <constraint firstItem="VMZ-Q5-yn1" firstAttribute="top" secondItem="hbV-UK-h7I" secondAttribute="bottom" constant="20" id="64L-bq-bJh"/>
+                            <constraint firstAttribute="trailing" secondItem="VMZ-Q5-yn1" secondAttribute="trailing" id="DAs-bl-FA2"/>
+                            <constraint firstItem="VMZ-Q5-yn1" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="Eta-rX-Y8t"/>
+                            <constraint firstItem="NAS-nB-CZC" firstAttribute="centerY" secondItem="kh9-bI-dsS" secondAttribute="centerY" id="GPP-y9-6Dz"/>
+                            <constraint firstItem="NAS-nB-CZC" firstAttribute="top" secondItem="VMZ-Q5-yn1" secondAttribute="bottom" constant="10" id="Mt3-Yo-Q8M"/>
+                            <constraint firstItem="hbV-UK-h7I" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="cOU-An-zWw"/>
+                            <constraint firstAttribute="trailing" secondItem="hbV-UK-h7I" secondAttribute="trailing" id="mRy-1b-VZ2"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="dummyLabel" destination="VMZ-Q5-yn1" id="2ub-1c-CiO"/>
+                        <outlet property="label" destination="hbV-UK-h7I" id="2xt-lD-PqZ"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="132" y="133.5832083958021"/>
+        </scene>
+    </scenes>
+</document>

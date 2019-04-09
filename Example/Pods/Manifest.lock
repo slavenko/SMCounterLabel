@@ -1,0 +1,16 @@
+PODS:
+  - SMCounterLabel (0.1.0)
+
+DEPENDENCIES:
+  - SMCounterLabel (from `../`)
+
+EXTERNAL SOURCES:
+  SMCounterLabel:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  SMCounterLabel: 647fb8387d237ad4017a2c92010c77a518c788bf
+
+PODFILE CHECKSUM: cbbbbda8005ef1e924787b6b4c32890604a83b3b
+
+COCOAPODS: 1.5.3
