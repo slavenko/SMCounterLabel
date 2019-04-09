@@ -1,3 +1,6 @@
+# Screenshot
+![Screenshot](animation.gif)
+
 # SMCounterLabel
 
 [![CI Status](https://img.shields.io/travis/slavenko/SMCounterLabel.svg?style=flat)](https://travis-ci.org/slavenko/SMCounterLabel)
