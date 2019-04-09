@@ -22,7 +22,7 @@ pod 'SMCounterLabel'
 
 ## Author
 
-slavenko, slavenko.miljic@nfinnova.com
+Slavenko Miljic, slavenko.miljic@gmail.com
 
 ## License
 
