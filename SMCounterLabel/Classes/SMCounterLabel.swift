@@ -75,6 +75,10 @@ public class SMSingleCounterLabel : UILabel
 public class SMCounterLabel : UILabel
 {
     public var formatType : SMLabelFormatType = .decimal
+    
+    public var duration : Double = 0.6
+    public var delay : Double = 0.2
+    public var durationIncrement : Double = 0.0
     public var color : UIColor = .black
     
     lazy var container : UIView = {
@@ -182,8 +186,8 @@ public class SMCounterLabel : UILabel
                 self.attributedText = attributedText
                 let fullTextWidth : CGFloat = self.text?.width(withConstrainedHeight: 0, font: self.font) ?? 0
                 var previousLetter : SMSingleCounterLabel? = nil
-                var delay : Double = 0.0
-                var duration : Double = 0.6
+                var initialdelay : Double = 0.0
+                var initialduration : Double = self.duration
                 _ = self.container.subviews.map({$0.removeFromSuperview()})
                 for (index, char) in text.enumerated()
                 {
@@ -256,19 +260,19 @@ public class SMCounterLabel : UILabel
                     let newNumber = self.parseCurrencyString(text)
                     if newChar != nil && oldNumber != nil
                     {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + delay){
+                        DispatchQueue.main.asyncAfter(deadline: .now() + initialdelay){
                             if newNumber! > oldNumber!
                             {
-                                lbl.incrementValue(endValue: newChar!, duration: duration)
+                                lbl.incrementValue(endValue: newChar!, duration: initialduration)
                             }
                             else
                             {
-                                lbl.decrementValue(endValue: newChar!, duration: duration)
+                                lbl.decrementValue(endValue: newChar!, duration: initialduration)
                             }
-                            duration += 0.05
+                            initialduration += self.durationIncrement
                             
                         }
-                        delay += 0.1
+                        initialdelay += self.delay
                     }
                 }
             }

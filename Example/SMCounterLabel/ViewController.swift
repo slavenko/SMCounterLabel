@@ -22,9 +22,22 @@ class ViewController: UIViewController {
         
         dummyLabel.font = UIFont(name:"Menlo", size: 50)
         
+        //Format type integer/decimal/fancy
         label.formatType = .decimal
+        
+        //How long it takes to animate one character
+        label.duration = 0.6
+        
+        //How long to wait before the next character starts animating
+        label.delay = 0.2
+        
+        //If for some reason you want the animation to slow down towards the end
+        label.durationIncrement = 0.0
+        
+        //Text color obviously
         label.color = .darkGray
         
+        //Set the value
         label.setValue(1234.56)
         dummyLabel.text = "\(label.getValue())"
     }
