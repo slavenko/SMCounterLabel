@@ -12,6 +12,8 @@
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
+The demo application is written entirely in SwiftUI. `CounterDemoView` wraps `SMCounterLabel` with `UIViewRepresentable` so you can tweak the animation parameters using modern SwiftUI controls and preview the result instantly.
+
 ## Usage
 ```
 //Format type integer/decimal/fancy
