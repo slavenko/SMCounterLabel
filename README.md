@@ -1,49 +1,70 @@
 # SMCounterLabel
 
-[![CI Status](https://img.shields.io/travis/slavenko/SMCounterLabel.svg?style=flat)](https://travis-ci.org/slavenko/SMCounterLabel)
-[![Version](https://img.shields.io/cocoapods/v/SMCounterLabel.svg?style=flat)](https://cocoapods.org/pods/SMCounterLabel)
-[![License](https://img.shields.io/cocoapods/l/SMCounterLabel.svg?style=flat)](https://cocoapods.org/pods/SMCounterLabel)
-[![Platform](https://img.shields.io/cocoapods/p/SMCounterLabel.svg?style=flat)](https://cocoapods.org/pods/SMCounterLabel)
+[![License](https://img.shields.io/github/license/slavenko/SMCounterLabel.svg?style=flat)](https://github.com/slavenko/SMCounterLabel/blob/master/LICENSE)
+[![Platform](https://img.shields.io/badge/platform-iOS%2017%2B-blue.svg?style=flat)](https://developer.apple.com/swift/)
+[![Swift](https://img.shields.io/badge/Swift-5.9-orange.svg?style=flat)](https://swift.org)
 
-# Screenshot
+A native SwiftUI view that animates numeric value changes with a slot-machine effect — each digit spins independently.
+
 ![Screenshot](animation.gif)
-
-## Example
-
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
-
-## Usage
-```
-//Format type integer/decimal/fancy
-label.formatType = .decimal
-
-//How long it takes to animate one character
-label.duration = 0.6
-
-//How long to wait before the next character starts animating
-label.delay = 0.2
-
-//If for some reason you want the 
-//animation to slow down towards the end
-label.durationIncrement = 0.0
-
-//Text color obviously
-label.color = .darkGray
-
-//Set the label value
-label.setValue(1234.56)
-```
 
 ## Requirements
 
+- iOS 17+ / macOS 14+
+- Swift 5.9+
+- Xcode 15+
+
 ## Installation
 
-SMCounterLabel is available through [CocoaPods](https://cocoapods.org). To install
-it, simply add the following line to your Podfile:
+### Swift Package Manager
 
-```ruby
-pod 'SMCounterLabel'
+In Xcode: **File → Add Package Dependencies…** and enter the repo URL:
+
 ```
+https://github.com/slavenko/SMCounterLabel.git
+```
+
+Or add it to your `Package.swift`:
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/slavenko/SMCounterLabel.git", from: "1.0.0")
+]
+```
+
+## Usage
+
+```swift
+import SwiftUI
+import SMCounterLabel
+
+struct ContentView: View {
+    @State private var amount: Double = 1234.56
+
+    var body: some View {
+        CounterLabel(value: amount, format: .fancy)
+            .font(.system(size: 50, design: .monospaced))
+    }
+}
+```
+
+### Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `value` | `Double` | — | The numeric value to display |
+| `format` | `CounterFormat` | `.decimal` | Number format style |
+| `duration` | `Double` | `0.6` | Animation duration per digit (seconds) |
+| `delay` | `Double` | `0.2` | Delay between each digit animating |
+| `durationIncrement` | `Double` | `0.0` | Extra duration added per digit (slows toward end) |
+
+### Format styles
+
+| Value | Output | Notes |
+|-------|--------|-------|
+| `.decimal` | `1,234.56` | Grouping separator + 2 decimal places |
+| `.integer` | `1235` | Rounded, no decimals |
+| `.fancy` | `1,234.56` | Same as decimal; decimal portion renders smaller |
 
 ## Author
 
