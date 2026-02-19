@@ -1,5 +1,6 @@
 # SMCounterLabel
 
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg?style=flat)](https://github.com/slavenko/SMCounterLabel/releases/tag/1.0.0)
 [![License](https://img.shields.io/github/license/slavenko/SMCounterLabel.svg?style=flat)](https://github.com/slavenko/SMCounterLabel/blob/master/LICENSE)
 [![Platform](https://img.shields.io/badge/platform-iOS%2017%2B-blue.svg?style=flat)](https://developer.apple.com/swift/)
 [![Swift](https://img.shields.io/badge/Swift-5.9-orange.svg?style=flat)](https://swift.org)
@@ -42,8 +43,7 @@ struct ContentView: View {
     @State private var amount: Double = 1234.56
 
     var body: some View {
-        CounterLabel(value: amount, format: .fancy)
-            .font(.system(size: 50, design: .monospaced))
+        CounterLabel(value: amount, format: .fancy, fontSize: 40)
     }
 }
 ```
@@ -54,9 +54,11 @@ struct ContentView: View {
 |-----------|------|---------|-------------|
 | `value` | `Double` | — | The numeric value to display |
 | `format` | `CounterFormat` | `.decimal` | Number format style |
+| `fontSize` | `CGFloat` | `17` | Font size for the main digits |
+| `decimalScale` | `CGFloat` | `0.5` | Size of the decimal portion relative to `fontSize` |
 | `duration` | `Double` | `0.6` | Animation duration per digit (seconds) |
-| `delay` | `Double` | `0.2` | Delay between each digit animating |
-| `durationIncrement` | `Double` | `0.0` | Extra duration added per digit (slows toward end) |
+| `delay` | `Double` | `0.2` | Stagger delay between each digit animating |
+| `durationIncrement` | `Double` | `0.0` | Extra duration added per digit (slows animation toward the end) |
 
 ### Format styles
 
@@ -64,7 +66,7 @@ struct ContentView: View {
 |-------|--------|-------|
 | `.decimal` | `1,234.56` | Grouping separator + 2 decimal places |
 | `.integer` | `1235` | Rounded, no decimals |
-| `.fancy` | `1,234.56` | Same as decimal; decimal portion renders smaller |
+| `.fancy` | `1,234.56` | Decimal portion renders at `decimalScale` of the main font size, bottom-aligned |
 
 ## Author
 
