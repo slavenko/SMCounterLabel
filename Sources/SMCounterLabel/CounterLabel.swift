@@ -9,6 +9,7 @@ public struct CounterLabel: View {
 
     @State private var slots: [DigitSlot] = []
     @State private var animationTask: Task<Void, Never>?
+    @State private var currentDirection: AnimationDirection = .increment
 
     public init(
         value: Double,
@@ -27,15 +28,11 @@ public struct CounterLabel: View {
     public var body: some View {
         HStack(spacing: 0) {
             ForEach(slots) { slot in
-                switch slot.kind {
-                case .digit:
-                    DigitView(slot: slot)
-                        .clipped()
-                        .font(slot.isFancySmall ? .caption : nil)
-                case .separator(let char):
-                    Text(String(char))
-                        .font(slot.isFancySmall ? .caption : nil)
-                }
+                slotView(for: slot)
+                    .transition(.asymmetric(
+                        insertion: .move(edge: currentDirection.insertionEdge),
+                        removal:   .move(edge: currentDirection.removalEdge)
+                    ))
             }
         }
         .clipped()
@@ -43,6 +40,19 @@ public struct CounterLabel: View {
         .onChange(of: value) { oldVal, newVal in
             animationTask?.cancel()
             animationTask = Task { await animate(from: oldVal, to: newVal) }
+        }
+    }
+
+    @ViewBuilder
+    private func slotView(for slot: DigitSlot) -> some View {
+        switch slot.kind {
+        case .digit:
+            DigitView(slot: slot)
+                .clipped()
+                .font(slot.isFancySmall ? .caption : nil)
+        case .separator(let char):
+            Text(String(char))
+                .font(slot.isFancySmall ? .caption : nil)
         }
     }
 
@@ -64,39 +74,108 @@ public struct CounterLabel: View {
         let oldFormatted = formatNumber(oldValue, format: format)
         let newFormatted = formatNumber(newValue, format: format)
         let direction: AnimationDirection = newValue >= oldValue ? .increment : .decrement
+        currentDirection = direction
 
-        // Rebuild slots completely if the string length changed (e.g. 999 → 1000)
         if oldFormatted.count != newFormatted.count {
-            buildSlots(for: newValue)
+            animateLengthChange(newFormatted: newFormatted, direction: direction)
             return
         }
 
-        let newRawSlots = splitIntoSlots(newFormatted)
+        animateSameLength(newFormatted: newFormatted, direction: direction)
+    }
+
+    /// When digit count changes: right-align old and new digit sequences.
+    /// Extra leading slots slide out, new leading slots slide in, overlapping slots animate in place.
+    private func animateLengthChange(newFormatted: String, direction: AnimationDirection) {
+        let existingDigitSlots = slots.filter { guard case .digit = $0.kind else { return false }; return true }
+        let newRaw = splitIntoSlots(newFormatted)
+        let newDigitRaw = newRaw.filter { guard case .digit = $0 else { return false }; return true }
+
+        let oldDigitCount = existingDigitSlots.count
+        let newDigitCount = newDigitRaw.count
+        let overlap = min(oldDigitCount, newDigitCount)
+        // How many new leading digits have no old counterpart
+        let newLeadingCount = newDigitCount - overlap
+        // Trailing old digit slots that map to new digits (right-aligned)
+        let keptDigitSlots = Array(existingDigitSlots.suffix(overlap))
+
+        // Build the new slot array, reusing kept slot objects for overlapping digits
+        let decimalIndex = decimalSeparatorIndex(in: newFormatted)
+        var newSlots: [DigitSlot] = []
+        var overlapIdx = 0
+        var newDigitIdx = 0
+
+        for (i, rawSlot) in newRaw.enumerated() {
+            let ds: DigitSlot
+            if case .digit = rawSlot {
+                if newDigitIdx < newLeadingCount {
+                    // Brand-new leading digit — create fresh slot
+                    ds = DigitSlot(slot: rawSlot)
+                    ds.displayChar = direction == .increment ? "0" : "9"
+                } else {
+                    // Overlapping digit — reuse existing slot so it animates in place
+                    ds = keptDigitSlots[overlapIdx]
+                    overlapIdx += 1
+                }
+                newDigitIdx += 1
+            } else {
+                ds = DigitSlot(slot: rawSlot)
+            }
+            ds.isFancySmall = format == .fancy && decimalIndex != nil && i >= decimalIndex!
+            newSlots.append(ds)
+        }
+
+        // Update slots array: SwiftUI slides removed slots out, new slots in
+        withAnimation(.easeInOut(duration: duration)) {
+            slots = newSlots
+        }
+
+        // Animate every digit to its target value
+        let allDigitSlots = newSlots.filter { guard case .digit = $0.kind else { return false }; return true }
+        let allTargetChars = newDigitRaw.compactMap { slot -> Character? in
+            guard case .digit(let c) = slot else { return nil }; return c
+        }
+
         var slotDelay = 0.0
-        var slotDuration = duration
-
-        for (index, newSlot) in newRawSlots.enumerated() {
-            guard index < slots.count else { break }
-            guard case .digit(let newChar) = newSlot,
-                  case .digit(let oldChar) = slots[index].kind,
-                  newChar != oldChar else { continue }
-
-            let slot = slots[index]
-            let targetChar = String(newChar)
+        var slotDuration = self.duration
+        for (slot, targetChar) in zip(allDigitSlots, allTargetChars) {
+            let target = String(targetChar)
+            guard slot.displayChar != target else { continue }
             let capturedDelay = slotDelay
             let capturedDuration = slotDuration
-
             Task {
                 try? await Task.sleep(for: .seconds(capturedDelay))
-                await slot.animate(to: targetChar, direction: direction, totalDuration: capturedDuration)
+                await slot.animate(to: target, direction: direction, totalDuration: capturedDuration)
             }
-
             slotDelay += delay
             slotDuration += durationIncrement
         }
     }
 
-    /// Returns the index of the decimal separator character in the formatted string, or nil.
+    /// Same digit count: animate only changed digit slots.
+    private func animateSameLength(newFormatted: String, direction: AnimationDirection) {
+        let newRawSlots = splitIntoSlots(newFormatted)
+        var slotDelay = 0.0
+        var slotDuration = duration
+
+        for (index, newSlot) in newRawSlots.enumerated() {
+            guard index < slots.count,
+                  case .digit(let newChar) = newSlot else { continue }
+            let slot = slots[index]
+            let targetChar = String(newChar)
+            guard slot.displayChar != targetChar else { continue }
+            let capturedDelay = slotDelay
+            let capturedDuration = slotDuration
+            Task {
+                try? await Task.sleep(for: .seconds(capturedDelay))
+                await slot.animate(to: targetChar, direction: direction, totalDuration: capturedDuration)
+            }
+            slotDelay += delay
+            slotDuration += durationIncrement
+        }
+    }
+
+    /// Returns the character index of the decimal separator in the formatted string, or nil.
     private func decimalSeparatorIndex(in string: String) -> Int? {
         let decimalSep = Locale.current.decimalSeparator ?? "."
         guard let range = string.range(of: decimalSep) else { return nil }
@@ -110,7 +189,7 @@ public struct CounterLabel: View {
         CounterLabel(value: amount, format: .fancy)
             .font(.system(size: 50, design: .monospaced))
         Button("Random") {
-            amount = Double.random(in: 1...9999)
+            amount = Double.random(in: 1...19999)
         }
         .buttonStyle(.borderedProminent)
     }
