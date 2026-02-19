@@ -103,3 +103,15 @@ public struct CounterLabel: View {
         return string.distance(from: string.startIndex, to: range.lowerBound)
     }
 }
+
+#Preview {
+    @Previewable @State var amount: Double = 1234.56
+    VStack(spacing: 40) {
+        CounterLabel(value: amount, format: .fancy)
+            .font(.system(size: 50, design: .monospaced))
+        Button("Random") {
+            amount = Double.random(in: 1...9999)
+        }
+        .buttonStyle(.borderedProminent)
+    }
+}
