@@ -3,6 +3,8 @@ import SwiftUI
 public struct CounterLabel: View {
     public var value: Double
     public var format: CounterFormat = .decimal
+    public var fontSize: CGFloat = 17
+    public var decimalScale: CGFloat = 0.5
     public var duration: Double = 0.6
     public var delay: Double = 0.2
     public var durationIncrement: Double = 0.0
@@ -14,27 +16,29 @@ public struct CounterLabel: View {
     public init(
         value: Double,
         format: CounterFormat = .decimal,
+        fontSize: CGFloat = 17,
+        decimalScale: CGFloat = 0.5,
         duration: Double = 0.6,
         delay: Double = 0.2,
         durationIncrement: Double = 0.0
     ) {
         self.value = value
         self.format = format
+        self.fontSize = fontSize
+        self.decimalScale = decimalScale
         self.duration = duration
         self.delay = delay
         self.durationIncrement = durationIncrement
     }
 
     public var body: some View {
-        HStack(spacing: 0) {
+		HStack(alignment: .center, spacing: 0) {
             ForEach(slots) { slot in
                 slotView(for: slot)
-                    .transition(.asymmetric(
-                        insertion: .move(edge: currentDirection.insertionEdge),
-                        removal:   .move(edge: currentDirection.removalEdge)
-                    ))
+                    .transition(slotTransition(for: slot))
             }
         }
+        .font(.system(size: fontSize, design: .monospaced))
         .clipped()
         .onAppear { buildSlots(for: value) }
         .onChange(of: value) { oldVal, newVal in
@@ -43,16 +47,30 @@ public struct CounterLabel: View {
         }
     }
 
+    private func slotTransition(for slot: DigitSlot) -> AnyTransition {
+        guard case .digit = slot.kind else { return .identity }
+        return .asymmetric(
+            insertion: .move(edge: currentDirection.insertionEdge),
+            removal:   .move(edge: currentDirection.removalEdge)
+        )
+    }
+
     @ViewBuilder
     private func slotView(for slot: DigitSlot) -> some View {
+        let smallFont = Font.system(size: fontSize * decimalScale)
         switch slot.kind {
         case .digit:
-            DigitView(slot: slot)
-                .clipped()
-                .font(slot.isFancySmall ? .caption : nil)
+            if slot.isFancySmall {
+                DigitView(slot: slot).clipped().font(smallFont)
+            } else {
+                DigitView(slot: slot).clipped()
+            }
         case .separator(let char):
-            Text(String(char))
-                .font(slot.isFancySmall ? .caption : nil)
+            if slot.isFancySmall {
+                Text(String(char)).font(smallFont)
+            } else {
+                Text(String(char))
+            }
         }
     }
 
@@ -183,14 +201,17 @@ public struct CounterLabel: View {
     }
 }
 
+
 #Preview {
     @Previewable @State var amount: Double = 1234.56
-    VStack(spacing: 40) {
-        CounterLabel(value: amount, format: .fancy)
-            .font(.system(size: 50, design: .monospaced))
+	VStack(alignment: .trailing, spacing: 40) {
+		CounterLabel(value: amount, format: .fancy, fontSize: 50)
+            .frame(maxWidth: .infinity, alignment: .trailing)
         Button("Random") {
             amount = Double.random(in: 1...19999)
         }
         .buttonStyle(.borderedProminent)
     }
+	.frame(maxWidth: .infinity, maxHeight: .infinity)
+	.padding()
 }
